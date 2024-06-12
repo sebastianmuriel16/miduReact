@@ -1,15 +1,15 @@
-import './App.css'
-import { usecatfact } from './Hooks/useCatFact'
-import { useCatImage } from './Hooks/useCatImage'
-import { Otro } from './Components/Otro.jsx'
+import "./App.css";
+import { useCatfact } from "./Hooks/useCatFact";
+import { useCatImage } from "./Hooks/useCatImage";
+import { Otro } from "./Components/Otro.jsx";
 
 function App() {
-  const { fact, refreshRandomFact } = usecatfact()
-  const { image } = useCatImage({ fact })
+  const { fact, refreshRandomFact } = useCatfact();
+  const { image } = useCatImage({ fact });
 
   const handleClick = () => {
-    refreshRandomFact()
-  }
+    refreshRandomFact();
+  };
 
   return (
     <main className="App">
@@ -25,11 +25,9 @@ function App() {
       )}
       {/*</section> /*section para mostrar la imagen*/}
 
-      <Otro />
+      {/* <Otro /> */}
     </main>
-
-    
-  )
+  );
 }
 
-export { App }
+export { App };
