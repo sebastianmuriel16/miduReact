@@ -1,34 +1,28 @@
-import { ClearCartIcon, CartIcon } from './Icons'
-import { useId } from 'react'
-import { useCart } from '../Hooks/useCart'
-import PropTypes from 'prop-types'
-import './Cart.css'
+import { ClearCartIcon, CartIcon } from "./Icons";
+import { useId } from "react";
+import { useCart } from "../Hooks/useCart";
+import PropTypes from "prop-types";
+import "./Cart.css";
 
-function CartItem({title, image, price, quantity,addToCart}) {
+function CartItem({ title, image, price, quantity, addToCart }) {
   return (
     <li>
-    <img
-      src={image}
-      alt={title}
-    />
-    <div>
-      <strong>{title}</strong> - ${price}
-    </div>
+      <img src={image} alt={title} />
+      <div>
+        <strong>{title}</strong> - ${price}
+      </div>
 
-    <footer>
-      <small>Qty: {quantity}</small>
-      <button
-      onClick={addToCart}
-      >+</button>
-    </footer>
-  </li>
-  )
-
+      <footer>
+        <small>Qty: {quantity}</small>
+        <button onClick={addToCart}>+</button>
+      </footer>
+    </li>
+  );
 }
 
 function Cart() {
-  const cartCheckboxId = useId()
-  const { cart, clearCart, addToCart } = useCart()
+  const cartCheckboxId = useId();
+  const { cart, clearCart, addToCart } = useCart();
 
   return (
     <>
@@ -40,7 +34,11 @@ function Cart() {
       <aside className="cart">
         <ul>
           {cart.map((product) => (
-            <CartItem key={product.id} {...product} addToCart={() => addToCart(product)}/>
+            <CartItem
+              key={product.id}
+              {...product}
+              addToCart={() => addToCart(product)}
+            />
           ))}
         </ul>
 
@@ -49,7 +47,7 @@ function Cart() {
         </button>
       </aside>
     </>
-  )
+  );
 }
 
 CartItem.propTypes = {
@@ -57,7 +55,7 @@ CartItem.propTypes = {
   image: PropTypes.string,
   price: PropTypes.number,
   quantity: PropTypes.number,
-  addToCart: PropTypes.func
-}
+  addToCart: PropTypes.func,
+};
 
-export { Cart }
+export { Cart };

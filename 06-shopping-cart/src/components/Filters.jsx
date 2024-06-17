@@ -1,19 +1,18 @@
-import './Filters.css'
-import PropTypes from 'prop-types'
-import {  useId, useContext } from 'react'
-import { FilterContext } from '../context/filter'
+import "./Filters.css";
+import PropTypes from "prop-types";
+import { useId, useContext } from "react";
+import { FilterContext } from "../context/filter";
 function Filters() {
-  const {filters,setFilters} = useContext(FilterContext)
-  const minFilterPriceId = useId()
-  const categoryFilterId = useId()
+  const { filters, setFilters } = useContext(FilterContext);
+  const minFilterPriceId = useId();
+  const categoryFilterId = useId();
 
-
-  const handlePrice = (event) => {  
+  const handlePrice = (event) => {
     setFilters((prevState) => ({
       ...prevState,
-      price: event.target.value
-    }))
-  }
+      price: event.target.value,
+    }));
+  };
 
   const handleChangeCategory = (event) => {
     // se le esta pasando la funcion de actulizar el estado
@@ -22,8 +21,8 @@ function Filters() {
     setFilters((prevState) => ({
       ...prevState,
       category: event.target.value,
-    }))
-  }
+    }));
+  };
 
   return (
     <section className="filters">
@@ -31,7 +30,7 @@ function Filters() {
         <label htmlFor={minFilterPriceId}>Precio a partir de</label>
         <input
           type="range"
-          id={minFilterPriceId} 
+          id={minFilterPriceId}
           min="0"
           max="1000"
           onChange={handlePrice}
@@ -42,7 +41,7 @@ function Filters() {
       <div>
         <label htmlFor={categoryFilterId}>category</label>
         <select id={categoryFilterId} onChange={handleChangeCategory}>
-          <option value="all">All</option>
+          <option value="all      ">All</option>
           <option value="Clothes">Clothes</option>
           <option value="Miscellaneous">Miscellaneous</option>
           <option value="Furniture">Furniture</option>
@@ -51,11 +50,11 @@ function Filters() {
         </select>
       </div>
     </section>
-  )
+  );
 }
 
 Filters.propTypes = {
-  onChange: PropTypes.func
-}
+  onChange: PropTypes.func,
+};
 
-export { Filters }
+export { Filters };
