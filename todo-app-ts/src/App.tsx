@@ -13,13 +13,13 @@ const App = (): JSX.Element => {
     completedCount,
     filteredTodos,
     handleRemoveAllCompleted,
-    handleAddTodo,
+    handleSave,
     handleUpdateTitle,
   } = useTodos();
 
   return (
     <div className="todoapp">
-      <Header onAddTodo={handleAddTodo} />
+      <Header onAddTodo={handleSave} />
       <Todos
         todos={filteredTodos}
         onRemoveTodo={handleRemove}

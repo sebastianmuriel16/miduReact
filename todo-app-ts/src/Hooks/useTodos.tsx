@@ -72,7 +72,7 @@ const useTodos = () => {
     setTodos(newTodos);
   };
 
-  const handleAddTodo = ({ title }: TodoTitle): void => {
+  const handleSave = ({ title }: TodoTitle): void => {
     const newTodo = {
       id: crypto.randomUUID(),
       title,
@@ -113,7 +113,7 @@ const useTodos = () => {
     completedCount,
     filteredTodos,
     handleRemoveAllCompleted,
-    handleAddTodo,
+    handleSave,
     handleUpdateTitle,
   };
 };
