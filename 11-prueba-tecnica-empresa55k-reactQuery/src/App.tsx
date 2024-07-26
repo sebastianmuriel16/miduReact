@@ -1,52 +1,22 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { SortBy, type User } from "./types.d";
-import { UsersList } from "./components/UsersList";
+import { useMemo, useState } from "react";
 import "./App.css";
-
-const getUsers = async (page: number) => {
-  return await fetch(
-    `https://randomuser.me/api/?results=10&seed=SebastianMuriel&page=${page}`
-  )
-    .then(async (res) => {
-      if (!res.ok) throw new Error(res.statusText);
-      return await res.json();
-    })
-    .then((data) => data.results);
-};
+import { UsersList } from "./components/UsersList";
+import { type User, SortBy } from "./types.d";
+import { useUsers } from "./hooks/useUsers";
 
 function App() {
-  const [users, setUsers] = useState<User[]>([]);
+  const { users, isLoading, isError, refetch, fetchNextPage, hasNextPage } =
+    useUsers();
+
   const [showColors, setShowColors] = useState(false);
   const [sorting, setSorting] = useState<SortBy>(SortBy.NONE);
-  const originalUsers = useRef<User[]>([]);
+  // const originalUsers = useRef<User[]>([]);
   const [filterCountry, setFilterCountry] = useState<string | null>(null);
+  const [eliminatedUuids, setEliminatedUuids] = useState<string[]>([]);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const [currentPage, setCurrentPage] = useState(1);
-
-  //useRef -> es para guardar un valor
-  //que queramos compartir entre renders
-  //sin que el componente se vuelva renderizar de nuevo
-
-  useEffect(() => {
-    setLoading(true);
-    setError(false);
-    getUsers(currentPage)
-      .then((users) => {
-        setUsers((prevUsers) => {
-          const newUsers = prevUsers.concat(users);
-          originalUsers.current = newUsers;
-          return newUsers;
-        });
-      })
-      .catch((error) => {
-        setError(true);
-        console.error(error);
-      })
-      .finally(() => setLoading(false));
-  }, [currentPage]);
+  // //useRef -> es para guardar un valor
+  // //que queramos compartir entre renders
+  // //sin que el componente se vuelva renderizar de nuevo
 
   const toogleColors = () => setShowColors((showColors) => !showColors);
   const toogleOrderUsersByCountry = () => {
@@ -55,10 +25,11 @@ function App() {
     setSorting(newSortingValue);
   };
 
-  const handleDelete = (uuid: string) => {
-    const newUsers = users.filter((user) => user.login.uuid !== uuid);
-    setUsers(newUsers);
-  };
+  // const filteredEliminados = useMemo(() => {
+  //   return typeof eliminatedUuid === "string" && eliminatedUuid.length > 0
+  //     ? users.filter((user) => user.login.uuid !== eliminatedUuid)
+  //     : users;
+  // }, [users, eliminatedUuid]);
 
   const handleChangeSort = (sort: SortBy) => {
     setSorting(sort);
@@ -71,15 +42,23 @@ function App() {
   //     )
   //   : users;
 
+  const handleDeleteUser = (uuid: string) => {
+    setEliminatedUuids((prevState) => prevState.concat(uuid));
+  };
+
+  const eliminatedUsers = users.filter(
+    (user) => !eliminatedUuids.includes(user.login.uuid)
+  );
+
   const filteredUsers = useMemo(() => {
     return typeof filterCountry === "string" && filterCountry.length > 0
-      ? users.filter((user) => {
+      ? eliminatedUsers.filter((user) => {
           return user.location.country
             .toLowerCase()
             .includes(filterCountry.toLowerCase());
         })
-      : users;
-  }, [users, filterCountry]);
+      : eliminatedUsers;
+  }, [eliminatedUsers, filterCountry]);
 
   const sortedUsers = useMemo(() => {
     if (sorting === SortBy.NONE) return filteredUsers;
@@ -96,14 +75,16 @@ function App() {
     });
   }, [filteredUsers, sorting]);
 
-  // const sortedUsers = sortByCountry
-  //   ? filteredUsers.toSorted((a, b) =>
-  //       a.location.country.localeCompare(b.location.country)
-  //     )
-  //   : filteredUsers;
+  // // const sortedUsers = sortByCountry
+  // //   ? filteredUsers.toSorted((a, b) =>
+  // //       a.location.country.localeCompare(b.location.country)
+  // //     )
+  // //   : filteredUsers;
 
   const handleReset = () => {
-    setUsers(originalUsers.current);
+    // setUsers(originalUsers.current);
+    // await refetch();
+    setEliminatedUuids([]);
   };
 
   return (
@@ -125,29 +106,29 @@ function App() {
       </header>
 
       <main>
-        {users.length > 0 && (
+        {users?.length > 0 && (
           <UsersList
             changeSorting={handleChangeSort}
             users={sortedUsers}
             showColors={showColors}
-            deleteUser={handleDelete}
+            deleteUser={handleDeleteUser}
           />
         )}
 
-        {loading && <strong>Cargando...</strong>}
+        {isLoading && <strong>Cargando...</strong>}
 
-        {error && <strong>Ocurrio un error</strong>}
+        {isError && <strong>Ocurrio un error</strong>}
 
-        {!error && users.length === 0 && <strong>No hay usuarios</strong>}
+        {!isLoading && !isError && users.length === 0 && (
+          <strong>No hay usuarios</strong>
+        )}
 
-        <button
-          onClick={() => {
-            setCurrentPage((prevState) => prevState + 1);
-          }}
-        >
-          Cargar mas resultados
-        </button>
+        {!isLoading && !isError && hasNextPage && (
+          <button onClick={() => fetchNextPage()}>Cargar mas resultados</button>
+        )}
       </main>
+
+      {/* <h1>Prueba tecnica</h1> */}
     </>
   );
 }
